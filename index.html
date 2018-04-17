@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>视频自动播放</title>
+	<link rel="stylesheet" href="videoautoplay.css">
+	<meta http-equiv="content-Type" content="text/html; charset=utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+	<script type="text/javascript" src="jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="resource.js"></script>
+</head>
+<body>
+	<div class="con">
+		
+	</div>
+	
+	<script type="text/javascript">
+		$(function(){
+			renpicorvideo();
+
+			listenAllVideos();
+		})
+		function renpicorvideo(){
+			let s = ``;
+			let flag=true;
+			for(let i of arr){
+				//后缀名为 图片格式
+				if(i.src.indexOf("jpg")>=0||i.src.indexOf("png")>=0||i.src.indexOf("gif")>=0||i.src.indexOf("jpeg")>=0){
+					s+=`<img src="`+i.src+`" alt="">`;
+				}else{
+					if(flag){
+						//控制自动播放
+						s+=`<video src="`+i.src+`" controls="controls" id="played" ></video>`;
+						flag = false;
+					}else{
+						//只添加不播放
+						s+=`<video src="`+i.src+`" controls="controls"></video>`;
+					}
+				}
+			}
+			$(".con").append(s);//渲染完成后添加
+			setTimeout(()=>{
+	        	checkAutoPlay();
+			},1000)	
+
+		}
+		function checkAutoPlay(){
+			var st = window.innerHeight;
+	        var bst = $('#played').offset().top;
+	        var m = $("#played").height();
+	        if(parseInt(st)>parseInt(bst)){
+	        	$("#played")[0].play();		//添加autoplay属性不行，不能播放
+	        }
+		}
+		function listenAllVideos(){
+			$("video").each(function(){
+				$(this)[0].addEventListener("play",()=>{
+					$(this).siblings("video").each((i,item)=>{
+						item.pause();
+					});					
+				});
+			});
+		}		
+	</script>
+</body>
+</html>
